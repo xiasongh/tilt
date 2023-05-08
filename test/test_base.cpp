@@ -33,9 +33,9 @@ void run_op(string query_name, Op op, ts_t st, ts_t et, region_t* out_reg, regio
     cout << "### LOOP IR ###\n";
     cout << IRPrinter::Build(loop);
     cout << "\n\n";
-    cout << "### LLVM IR ###\n";
-    cout << IRPrinter::Build(llmod.get());
-    cout << "\n\n";
+    // cout << "### LLVM IR ###\n";
+    // cout << IRPrinter::Build(llmod.get());
+    // cout << "\n\n";
 
     jit->AddModule(move(llmod));
 
