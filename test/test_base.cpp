@@ -123,8 +123,33 @@ void select_test(string query_name, function<Expr(Expr)> sel_expr, function<OutT
     unary_op_test<InTy, OutTy>(query_name, sel_op, 0, len * dur, sel_query_fn, len, dur);
 }
 
+template<typename InTy, typename OutTy>
+void nested_select_test(string query_name, function<Expr(Expr)> sel_expr, function<OutTy(InTy)> sel_fn)
+{
+    size_t len = 100;
+    int64_t dur = 1;
+
+    auto in_sym = _sym("in", tilt::Type(types::STRUCT<InTy>(), _iter(0, -1)));
+    auto sel_op = _NestedSelect(in_sym, 10);
+
+    auto sel_query_fn = [sel_fn] (vector<Event<InTy>> in) {
+        vector<Event<OutTy>> out;
+
+        for (size_t i = 0; i < in.size(); i++) {
+            out.push_back({in[i].st, in[i].et, sel_fn(in[i].payload)});
+        }
+
+        return move(out);
+    };
+
+    unary_op_test<InTy, OutTy>(query_name, sel_op, 0, len * dur, sel_query_fn, len, dur);
+}
+
 void add_test()
 {
+    // nested_select_test<int32_t, int32_t>("iadd",
+    //     [] (Expr s) { return _add(s, _i32(10)); },
+    //     [] (int32_t s) { return s + 10; });
     select_test<int32_t, int32_t>("iadd",
         [] (Expr s) { return _add(s, _i32(10)); },
         [] (int32_t s) { return s + 10; });

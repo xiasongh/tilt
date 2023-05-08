@@ -93,7 +93,8 @@ void LoopGen::build_tloop(function<Expr()> true_body, function<Expr()> false_bod
 
     // Create loop counter
     auto t_base = _time("t_base");
-    set_expr(t_base, t_start);
+    // FIXME: changing offset changes how many 0s in beginning of window
+    set_expr(t_base, _add(t_start, _ts(2)));
     loop->t = _time("t");
     loop->state_bases[loop->t] = t_base;
 
@@ -111,19 +112,7 @@ void LoopGen::build_tloop(function<Expr()> true_body, function<Expr()> false_bod
     eval(ctx().op->output);
 
     // Loop counter update expression
-    Expr delta = nullptr;
-    for (const auto& [idx, diff_expr] : ctx().idx_diff_map) {
-        if (delta) {
-            delta = _min(delta, diff_expr);
-        } else {
-            delta = diff_expr;
-        }
-    }
-    auto t_period = _ts(ctx().op->iter.period);
-    auto t_incr = _mul(_div(delta, t_period), t_period);
-    // set_expr(loop->t, _min(t_end, _add(get_timer(_pt(0), true), t_incr)));
-    // set_expr(loop->t, loop->idxs[loop->idxs.size()-1]);
-    set_expr(loop->t, _add(t_base, _ts(1)));
+    set_expr(loop->t, get_timer(_pt(0), true));
 
     // Create loop output
     set_expr(loop->output, true_body());

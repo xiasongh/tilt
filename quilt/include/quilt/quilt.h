@@ -15,6 +15,7 @@ Op _Join(_sym, _sym);
 Op _WindowAvg(string, _sym, int64_t);
 Op _Norm(string, _sym, int64_t);
 Op _Resample(string, _sym, int64_t, int64_t);
+Op _NestedSelect(_sym, int64_t);
 
 Expr _Count(_sym);
 Expr _Sum(_sym);

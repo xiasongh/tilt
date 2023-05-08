@@ -279,3 +279,20 @@ Op _Resample(string query_name, _sym in, int64_t iperiod, int64_t operiod)
         inter_sym);
     return resample_op;
 }
+
+Op _NestedSelect(_sym in, int64_t w)
+{
+    auto window = in[_win(-w, 0)];
+    auto window_sym = _sym("win", window);
+    auto inner_sel = _Select(
+        window_sym,
+        [](Expr e) { return _add(e, _i32(10)); });
+    auto inner_sel_sym = _sym("inner_sel", inner_sel);
+    auto outer_sel = _op(
+        _iter(0, w),
+        Params{ in },
+        SymTable{ {window_sym, window}, {inner_sel_sym, inner_sel} },
+        _exists(window_sym),
+        inner_sel_sym);
+    return outer_sel;
+}
