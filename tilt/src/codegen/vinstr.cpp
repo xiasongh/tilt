@@ -47,7 +47,7 @@ char* fetch(region_t* reg, ts_t t, idx_t i, uint32_t bytes)
 {
     // auto ivl = reg->tl[i & reg->mask];
     // return (t <= ivl.t) ? nullptr : (reg->data + ((i & reg->mask) * bytes));
-    return reg->data + t * bytes;
+    return reg->data + i * bytes;
 }
 
 region_t* make_region(region_t* out_reg, region_t* in_reg, ts_t st, idx_t si, ts_t et, idx_t ei)

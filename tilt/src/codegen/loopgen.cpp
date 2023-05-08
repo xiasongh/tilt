@@ -93,7 +93,9 @@ void LoopGen::build_tloop(function<Expr()> true_body, function<Expr()> false_bod
 
     // Create loop counter
     auto t_base = _time("t_base");
+    // set_expr(t_base, t_start);
     set_expr(t_base, _sub(t_start, _ts(1)));
+    // set_expr(t_base, _add(t_start, _ts(1)));
     loop->t = _time("t");
     loop->state_bases[loop->t] = t_base;
 
