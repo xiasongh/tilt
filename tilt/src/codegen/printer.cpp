@@ -304,16 +304,12 @@ void IRPrinter::Visit(const LoopNode& loop)
     }
     emitnewline();
 
-    ostr << "while(1) {";
-    enter_block();
-
     emitcomment("loop condition check");
     emitnewline();
-    ostr << "if (";
+    ostr << "while (";
     loop.exit_cond->Accept(*this);
-    ostr << ") break;";
-    emitnewline();
-    emitnewline();
+    ostr << ") {";
+    enter_block();
 
     emitcomment("update indices");
     emitnewline();

@@ -50,7 +50,7 @@ Index& LoopGen::get_idx(const Sym reg, const Point pt)
             auto idx_base = _index("i" + to_string(pt.offset) + "_" + reg->name + "_base");
 
             // Index initializer
-            set_expr(idx_base, _get_start_idx(reg));
+            set_expr(idx_base, _sub(_get_start_idx(reg), _idx(1)));
             ctx().loop->state_bases[idx] = idx_base;
 
             // Index updater
@@ -93,12 +93,12 @@ void LoopGen::build_tloop(function<Expr()> true_body, function<Expr()> false_bod
 
     // Create loop counter
     auto t_base = _time("t_base");
-    set_expr(t_base, t_start);
+    set_expr(t_base, _sub(t_start, _ts(1)));
     loop->t = _time("t");
     loop->state_bases[loop->t] = t_base;
 
     // Loop exit condition
-    loop->exit_cond = _eq(t_base, t_end);
+    loop->exit_cond = _lt(t_base, t_end);
 
     // Create loop return value
     auto output_base = _sym("output_base", ctx().loop->type);
@@ -121,10 +121,12 @@ void LoopGen::build_tloop(function<Expr()> true_body, function<Expr()> false_bod
     }
     auto t_period = _ts(ctx().op->iter.period);
     auto t_incr = _mul(_div(delta, t_period), t_period);
-    set_expr(loop->t, _min(t_end, _add(get_timer(_pt(0), true), t_incr)));
+    // set_expr(loop->t, _min(t_end, _add(get_timer(_pt(0), true), t_incr)));
+    set_expr(loop->t, loop->idxs[loop->idxs.size()-1]);
+    // set_expr(loop->t, _add(t_base, _ts(1)));
 
     // Create loop output
-    set_expr(loop->output, _ifelse(pred_expr, true_body(), false_body()));
+    set_expr(loop->output, true_body());
 }
 
 void LoopGen::build_loop()
@@ -142,8 +144,8 @@ void LoopGen::build_loop()
             auto new_reg_sym = _sym("new_reg", new_reg);
             set_expr(new_reg_sym, new_reg);
 
-            auto idx = _get_end_idx(new_reg_sym);
-            auto dptr = _fetch(new_reg_sym, loop->t, idx);
+            // auto idx = _get_end_idx(new_reg_sym);
+            auto dptr = _fetch(new_reg_sym, loop->t, loop->idxs.back());
             return _write(new_reg_sym, dptr, out_expr);
         } else {
             return out_expr;

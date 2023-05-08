@@ -51,6 +51,8 @@ Expected<ThreadSafeModule> ExecEngine::optimize_module(ThreadSafeModule tsm, con
         llvm::legacy::PassManager mpm;
         builder.populateModulePassManager(mpm);
         mpm.run(m);
+
+        // TODO: can print optimized llvm here
     });
 
     return move(tsm);

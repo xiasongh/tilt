@@ -482,7 +482,7 @@ Value* LLVMGen::visit(const LoopNode& loop)
     }
 
     // Check exit condition
-    builder()->CreateCondBr(eval(loop.exit_cond), exit_bb, body_bb);
+    builder()->CreateCondBr(eval(loop.exit_cond), body_bb, exit_bb);
 
     // Loop body
     loop_fn->getBasicBlockList().push_back(body_bb);
