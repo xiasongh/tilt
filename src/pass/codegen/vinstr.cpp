@@ -25,7 +25,7 @@ int64_t get_ckpt(region_t* reg, ts_t t) { return t; }
 
 char* fetch(region_t* reg, ts_t t, uint32_t bytes)
 {
-    return reg->data + ((t & reg->mask) * bytes);
+    return reg->data + (t * bytes);
 }
 
 region_t* make_region(region_t* out_reg, region_t* in_reg, ts_t st, ts_t et)
@@ -44,19 +44,16 @@ region_t* init_region(region_t* reg, ts_t t, uint32_t size, char* data)
     reg->et = t;
     reg->mask = size - 1;
     reg->data = data;
-    commit_null(reg, t);
     return reg;
 }
 
 region_t* commit_data(region_t* reg, ts_t t)
 {
-    reg->et = t;
     return reg;
 }
 
 region_t* commit_null(region_t* reg, ts_t t)
 {
-    reg->et = t;
     return reg;
 }
 

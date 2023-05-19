@@ -54,7 +54,7 @@ void LoopGen::build_tloop(function<Expr()> true_body, function<Expr()> false_bod
 
     // Create loop counter
     auto t_base = _time("t_base");
-    set_expr(t_base, _sub(t_start, _ts(1)));
+    set_expr(t_base, _sub(t_start, _ts(ctx().op->iter.period)));
     loop->t = _time("t");
     loop->state_bases[loop->t] = t_base;
 
@@ -72,10 +72,10 @@ void LoopGen::build_tloop(function<Expr()> true_body, function<Expr()> false_bod
     eval(ctx().op->output);
 
     // Loop counter update expression
-    set_expr(loop->t, _min(t_end, get_timer(_pt(0), true)));
+    set_expr(loop->t, get_timer(_pt(0), true));
 
     // Create loop output
-    set_expr(loop->output, _ifelse(pred_expr, true_body(), false_body()));
+    set_expr(loop->output, true_body());
 }
 
 void LoopGen::build_loop()
