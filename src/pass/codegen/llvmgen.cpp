@@ -406,11 +406,11 @@ Value* LLVMGen::visit(const AllocRegion& alloc)
 
 Value* LLVMGen::visit(const MakeRegion& make_reg)
 {
-    auto in_reg_val = eval(make_reg.reg);
+    auto out_reg_val = eval(make_reg.out_reg);
+    auto in_reg_val = eval(make_reg.in_reg);
     auto st_val = eval(make_reg.st);
     auto et_val = eval(make_reg.et);
     auto reg_type = lltype(make_reg);
-    auto out_reg_val = builder()->CreateAlloca(reg_type->getPointerElementType());
     return llcall("make_region", reg_type, { out_reg_val, in_reg_val, st_val, et_val });
 }
 

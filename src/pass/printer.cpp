@@ -224,7 +224,7 @@ void IRPrinter::Visit(const AllocRegion& alloc_reg)
 
 void IRPrinter::Visit(const MakeRegion& mr)
 {
-    emitfunc("make_region", { mr.reg, mr.st, mr.et });
+    emitfunc("make_region", { mr.out_reg, mr.in_reg, mr.st, mr.et });
 }
 
 void IRPrinter::Visit(const Call& call)

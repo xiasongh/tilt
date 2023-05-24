@@ -135,14 +135,16 @@ struct AllocRegion : public ExprNode {
 };
 
 struct MakeRegion : public ExprNode {
-    Expr reg;
+    Expr out_reg;
+    Expr in_reg;
     Expr st;
     Expr et;
 
-    MakeRegion(Expr reg, Expr st, Expr et) :
-        ExprNode(reg->type), reg(reg), st(st), et(et)
+    MakeRegion(Expr out_reg, Expr in_reg, Expr st, Expr et) :
+        ExprNode(out_reg->type), out_reg(out_reg), in_reg(in_reg), st(st), et(et)
     {
-        ASSERT(!reg->type.is_val());
+        ASSERT(!out_reg->type.is_val());
+        ASSERT(!in_reg->type.is_val());
         ASSERT(st->type.dtype == types::TIME);
         ASSERT(et->type.dtype == types::TIME);
     }

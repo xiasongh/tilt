@@ -55,7 +55,7 @@ void LoopGen::build_tloop(function<Expr()> true_body, function<Expr()> false_bod
     // Create loop counter
     auto t_base = _time("t_base");
     // keep within bounds
-    set_expr(t_base, _max(_ts(-1), _sub(t_start, _ts(ctx().op->iter.period))));
+    set_expr(t_base, _max(_ts(ctx().op->iter.period), _sub(t_start, _ts(ctx().op->iter.period))));
     loop->t = _time("t");
     loop->state_bases[loop->t] = t_base;
 
@@ -192,13 +192,15 @@ Expr LoopGen::visit(const NaryExpr& e)
 Expr LoopGen::visit(const SubLStream& subls)
 {
     eval(subls.lstream);
-    auto& reg = get_sym(subls.lstream);
-    if (reg->type.is_beat()) {
-        return reg;
+    auto& in_reg = get_sym(subls.lstream);
+    if (in_reg->type.is_beat()) {
+        return in_reg;
     } else {
+        auto loop = ctx().loop;
+        auto out_reg = loop->state_bases[loop->output];
         auto st = get_timer(subls.win.start, subls.lstream->type.is_out());
         auto et = get_timer(subls.win.end, subls.lstream->type.is_out());
-        return _make_reg(reg, st, et);
+        return _make_reg(out_reg, in_reg, st, et);
     }
 }
 
