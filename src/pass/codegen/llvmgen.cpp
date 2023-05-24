@@ -476,7 +476,7 @@ Value* LLVMGen::visit(const LoopNode& loop)
     // Loop body
     loop_fn->getBasicBlockList().push_back(body_bb);
     builder()->SetInsertPoint(body_bb);
-    auto stack_val = builder()->CreateIntrinsic(Intrinsic::stacksave, {}, {});
+    // auto stack_val = builder()->CreateIntrinsic(Intrinsic::stacksave, {}, {});
 
     // Update loop counter
     eval(loop.t);
@@ -492,7 +492,7 @@ Value* LLVMGen::visit(const LoopNode& loop)
     // Jump back to loop header
     loop_fn->getBasicBlockList().push_back(end_bb);
     builder()->SetInsertPoint(end_bb);
-    builder()->CreateIntrinsic(Intrinsic::stackrestore, {}, {stack_val});
+    // builder()->CreateIntrinsic(Intrinsic::stackrestore, {}, {stack_val});
     builder()->CreateBr(header_bb);
 
     // Loop exit
