@@ -76,7 +76,7 @@ void LoopGen::build_tloop(function<Expr()> true_body, function<Expr()> false_bod
     set_expr(loop->t, get_timer(_pt(0), true));
 
     // Create loop output
-    set_expr(loop->output, true_body());
+    set_expr(loop->output, _ifelse(pred_expr, true_body(), false_body()));
 }
 
 void LoopGen::build_loop()
