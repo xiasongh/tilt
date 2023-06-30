@@ -39,14 +39,14 @@ Value* LLVMGen::llcall(const string name, llvm::Type* ret_type, vector<Expr> arg
 Value* LLVMGen::llsizeof(llvm::Type* type)
 {
     auto size = llmod()->getDataLayout().getTypeSizeInBits(type).getFixedSize();
-    return ConstantInt::get(lltype(types::UINT32), size/8);
+    return ConstantInt::get(lltype(types::UINT32), size >= 8 ? size/8 : size);
 }
 
 llvm::Type* LLVMGen::lltype(const DataType& dtype)
 {
     switch (dtype.btype) {
         case BaseType::BOOL:
-            return llvm::Type::getInt8Ty(llctx());
+            return llvm::Type::getInt1Ty(llctx());
         case BaseType::INT8:
         case BaseType::UINT8:
             return llvm::Type::getInt8Ty(llctx());
